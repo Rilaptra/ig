@@ -3,6 +3,27 @@ const { writeFileSync } = require('fs')
 const path = require('path')
 // Ganti dengan cookie sesi Instagram kamu
 
+const getUserID = async username => {
+    const url = 'https://www.instagram.com/graphql/query';
+    const cookie = 'ps_n=1; ps_l=1; ig_did=79E6920E-2047-40A0-BBEB-3E96B8DF9955; ig_nrcb=1; mid=Zk9vXAABAAF8OJnil3UJbiqwQ1qY; datr=XG9PZkltcTH_51diD_KVhya3; fbm_124024574287414=base_domain=.instagram.com; csrftoken=a1do2jZYcQjNbKL8E3A78L8gDISHyC3C; ds_user_id=8616935667; dpr=1.7000000476837158; shbid="5535\\0548616935667\\0541751110778:01f728aeba7d9790b5b7b74132c8fdf0d1923ff880561f4df809d8449f45bc9e9b3aeda3"; shbts="1719574778\\0548616935667\\0541751110778:01f7055924908b323c125368dccf5ebafdc92ca7a2023fbcd6a5c91c14553a75daa85ffe"; sessionid=8616935667%3AaiOqJOFNYZ8bHc%3A21%3AAYeU4z5_uA_6nXwCwH-Y8YR35z_N1cT53yzGjtLcig; wd=424x809; rur="CCO\\0548616935667\\0541751116502:01f7c88b4b559b8332954235a7648c88b9be77d8ab1c54fb82e843655a366e67e42bc072"; fbsr_124024574287414=CkHMsZAugEkMdQ19rmXG2i_gtcvgRbp2R5AzAAQ8udw.eyJ1c2VyX2lkIjoiMTAwMDI1MzMwNjM5NTM2IiwiY29kZSI6IkFRQnFoN1d0UGNGbURzU3FQdG1WMUFqY0RaVDdDcVpocXJPRW5NRGI1cW02UXNvTVVTS2RjVGpnbXVHWmthMnM4WFVvenpMUmJORjR5MDJSSXJabndYLVRpTjl4ZUxCU20zTjVrTTFDSUVyZ0gzSS1UN2dZY0dwdmRVX29OY3pqdjFpVjA0ZWFaVU1RZHlJSERhWkhqZmR1RjNQZWVGVEF6TnpteGtBTC1MVnk0XzNYMWo4aUhGNnhUdUpPUVkyZXIzWXBQX0xaMHdlbVZxUldlUDFsMlZlbkk5ZktBcXV5UVNENFNxRHQtYUV4WDJpc19wb2JMa0RTa2ZHaU5tOEtES0JoU3ZQbG5kX01lWWVkS1c0cXpCelNOY0hNNHI0YVl2clQ4QjJpNU1XUFVZVGRfeTI5QzYzNzlwZEs5NHRvSVNtNktMRFZQMXhLb2ZVYzB4WXdDQkZiIiwib2F1dGhfdG9rZW4iOiJFQUFCd3pMaXhuallCT1pCWENTWkJLdXhCWkJqc0JwcHZWREl2U2piRVBHeUdTS0cwbjZiNVZ2SktzVW5BeEZ6SjR3dDNXREhLcmthYXNaQ3VVZHVVV1ZNN3U1T3NZd0c2Mkg0Z2lGb2tyZW16MEFEWkF3eVRibVVqZ043bHRzMVhHekhLbDh5UDZZQWh5ODhxWTRROWJQVXZVdFhGcjNXZ0QzWU92d2REempaQWJZdmNzT0VsN1pCazEzdzJBWkI5NXIwU2hvY1pEIiwiYWxnb3JpdGhtIjoiSE1BQy1TSEEyNTYiLCJpc3N1ZWRfYXQiOjE3MTk1ODA1Mzl9'
+    const headers = {
+        Cookie: cookie,
+        'X-Ig-App-Id': '1217981644879628',
+        "Content-Type": "application/json"
+    }
+    const payload = {
+        "variables": {
+            "data": {
+                "query": username
+            },
+            "hasQuery": true
+        },
+        "doc_id": 7778489908879212
+    }
+    const response = await axios.post(url, payload, { headers })
+    return response.data.data.xdt_api__v1__fbsearch__topsearch_connection.users[0].user.pk
+}
+
 const checkFollowers = async (userID) => {
     const url = 'https://www.instagram.com/graphql/query';
     const cookie = 'ps_n=1; ps_l=1; ig_did=79E6920E-2047-40A0-BBEB-3E96B8DF9955; ig_nrcb=1; mid=Zk9vXAABAAF8OJnil3UJbiqwQ1qY; datr=XG9PZkltcTH_51diD_KVhya3; fbm_124024574287414=base_domain=.instagram.com; csrftoken=a1do2jZYcQjNbKL8E3A78L8gDISHyC3C; ds_user_id=8616935667; dpr=1.7000000476837158; shbid="5535\\0548616935667\\0541751110778:01f728aeba7d9790b5b7b74132c8fdf0d1923ff880561f4df809d8449f45bc9e9b3aeda3"; shbts="1719574778\\0548616935667\\0541751110778:01f7055924908b323c125368dccf5ebafdc92ca7a2023fbcd6a5c91c14553a75daa85ffe"; sessionid=8616935667%3AaiOqJOFNYZ8bHc%3A21%3AAYeU4z5_uA_6nXwCwH-Y8YR35z_N1cT53yzGjtLcig; wd=424x809; rur="CCO\\0548616935667\\0541751116502:01f7c88b4b559b8332954235a7648c88b9be77d8ab1c54fb82e843655a366e67e42bc072"; fbsr_124024574287414=CkHMsZAugEkMdQ19rmXG2i_gtcvgRbp2R5AzAAQ8udw.eyJ1c2VyX2lkIjoiMTAwMDI1MzMwNjM5NTM2IiwiY29kZSI6IkFRQnFoN1d0UGNGbURzU3FQdG1WMUFqY0RaVDdDcVpocXJPRW5NRGI1cW02UXNvTVVTS2RjVGpnbXVHWmthMnM4WFVvenpMUmJORjR5MDJSSXJabndYLVRpTjl4ZUxCU20zTjVrTTFDSUVyZ0gzSS1UN2dZY0dwdmRVX29OY3pqdjFpVjA0ZWFaVU1RZHlJSERhWkhqZmR1RjNQZWVGVEF6TnpteGtBTC1MVnk0XzNYMWo4aUhGNnhUdUpPUVkyZXIzWXBQX0xaMHdlbVZxUldlUDFsMlZlbkk5ZktBcXV5UVNENFNxRHQtYUV4WDJpc19wb2JMa0RTa2ZHaU5tOEtES0JoU3ZQbG5kX01lWWVkS1c0cXpCelNOY0hNNHI0YVl2clQ4QjJpNU1XUFVZVGRfeTI5QzYzNzlwZEs5NHRvSVNtNktMRFZQMXhLb2ZVYzB4WXdDQkZiIiwib2F1dGhfdG9rZW4iOiJFQUFCd3pMaXhuallCT1pCWENTWkJLdXhCWkJqc0JwcHZWREl2U2piRVBHeUdTS0cwbjZiNVZ2SktzVW5BeEZ6SjR3dDNXREhLcmthYXNaQ3VVZHVVV1ZNN3U1T3NZd0c2Mkg0Z2lGb2tyZW16MEFEWkF3eVRibVVqZ043bHRzMVhHekhLbDh5UDZZQWh5ODhxWTRROWJQVXZVdFhGcjNXZ0QzWU92d2REempaQWJZdmNzT0VsN1pCazEzdzJBWkI5NXIwU2hvY1pEIiwiYWxnb3JpdGhtIjoiSE1BQy1TSEEyNTYiLCJpc3N1ZWRfYXQiOjE3MTk1ODA1Mzl9'
@@ -93,6 +114,17 @@ const getFollowers = async (userID) => {
 
 }
 
-const userID = '40246613821'
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:204694356.
+const readline = require('readline').createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
-getFollowers(userID)
+readline.question('username: ', username => {
+    if (username) {
+        getUserID(username).then(id => console.log(id))
+    } else {
+        console.log('Please input username!')
+    }
+    readline.close();
+});
