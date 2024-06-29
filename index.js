@@ -64,7 +64,7 @@ const checkFollowers = async (userID) => {
  * @param {string} next_max_id 
  */
 const progressBar = (followers, currentFollowers, users, count, next_max_id) => {
-    const n = 10
+    const n = 19
     let percentage = Math.round((followers.length / currentFollowers) * n)
     console.log(`+ ${String(count).length == 1 ? `0${count}` : count} from ${users.length}, (${String(followers.length).length == 2 ? `0${followers.length}` : followers.length}), [${'⬜'.repeat(percentage)}${'⬛'.repeat(n - percentage)}] MaxID: ${next_max_id}`)
 }
@@ -131,15 +131,8 @@ const getFollowers = async (userID) => {
             }
         }
 
-        const lengkap = await Promise.all(followers.map(async (follower, i) => {
-            const user = await getUser(follower.username)
-            follower.search_social_context = user.search_social_context
-            console.log(`Fetching.. [${Math.round((i + 1) / followers.length * followers.length)}%]`)
-            return follower
-        }))
-        
-        writeFileSync(path.join(__dirname, 'followers.json'), JSON.stringify(lengkap))
-        console.log(`Followers exported! Total followers: ${lengkap.length}`)
+        writeFileSync(path.join(__dirname, 'followers.json'), JSON.stringify(followers))
+        console.log(`Followers exported! Total followers: ${followers.length}`)
     } catch (error) {
         if (error.response) {
             console.log(error.response.data)
